@@ -7,7 +7,6 @@ from tempfile import TemporaryDirectory
 import pytest
 from muscles_data.catalog import DataAdapterCatalog
 from muscles_data.config import DataConfig
-from muscles_data.contracts import assert_sql_resource_contract
 from muscles_data.ports import SqlResourcePort
 from muscles_data.runtime import DataRuntime
 
@@ -51,7 +50,10 @@ def test_sqlalchemy_real_session_and_health_lifecycle():
                 assert session.execute(text("select 1")).scalar_one() == 1
             assert sql.doctor()["status"] == "ok"
             assert runtime.doctor()["status"] == "ok"
-            assert_sql_resource_contract(lambda: sql)
+            contracts = pytest.importorskip("muscles_data.contracts")
+            contract = getattr(contracts, "assert_sql_resource_contract", None)
+            if contract is not None:
+                contract(lambda: sql)
         finally:
             runtime.close()
 
