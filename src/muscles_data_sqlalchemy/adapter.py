@@ -15,6 +15,7 @@ _ENGINE_UNSET = object()
 _SESSION_FACTORY_UNSET = object()
 _ALLOWED_OPTIONS = {
     "url",
+    "url_env",
     "name",
     "native_client",
     "echo",
@@ -147,9 +148,10 @@ class SqlAlchemySqlResourceAdapter:
     def _create_engine(self):
         self._validate_options()
         sqlalchemy = self._sqlalchemy_module()
-        kwargs = _engine_options(self.config.options)
+        options = self.config.resolved_options()
+        kwargs = _engine_options(options)
         try:
-            return sqlalchemy.create_engine(str(self.config.options["url"]), **kwargs)
+            return sqlalchemy.create_engine(str(options["url"]), **kwargs)
         except Exception as exc:
             raise SqlAlchemyConnectionError(self._safe_error(exc)) from exc
 
@@ -166,13 +168,18 @@ class SqlAlchemySqlResourceAdapter:
         if unknown:
             names = ", ".join(unknown)
             raise SqlAlchemyConfigError(f"Unsupported SQLAlchemy resource options: {names}")
+        if not self.config.options.get("url") and not self.config.options.get("url_env"):
+            raise SqlAlchemyConfigError("SQLAlchemy resource requires url or url_env")
         connect_args = self.config.options.get("connect_args")
         if connect_args is not None and not isinstance(connect_args, Mapping):
             raise SqlAlchemyConfigError("SQLAlchemy connect_args must be a mapping")
 
     def _safe_error(self, exc: Exception) -> str:
         message = str(exc)
-        url = str(self.config.options.get("url", ""))
+        try:
+            url = str(self.config.resolved_options().get("url", ""))
+        except Exception:
+            url = str(self.config.options.get("url", ""))
         if url:
             message = message.replace(url, "***")
         safe_url = self.config.safe_options().get("url")
