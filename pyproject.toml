@@ -14,6 +14,20 @@ dependencies = [
   "SQLAlchemy>=2.0,<3.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/butkoden/muscles-data-sqlalchemy"
+Repository = "https://github.com/butkoden/muscles-data-sqlalchemy"
+Documentation = "https://github.com/butkoden/muscles-data-sqlalchemy#readme"
+PyPI = "https://pypi.org/project/muscles-data-sqlalchemy/"
+Releases = "https://github.com/butkoden/muscles-data-sqlalchemy/releases"
+"muscles-data" = "https://pypi.org/project/muscles-data/"
+"muscles-data-elasticsearch" = "https://pypi.org/project/muscles-data-elasticsearch/"
+"muscles-data-opensearch" = "https://pypi.org/project/muscles-data-opensearch/"
+"muscles-data-qdrant" = "https://pypi.org/project/muscles-data-qdrant/"
+"muscles-data-redis" = "https://pypi.org/project/muscles-data-redis/"
+"muscles-data-mongodb" = "https://pypi.org/project/muscles-data-mongodb/"
+"muscles-data-s3" = "https://pypi.org/project/muscles-data-s3/"
+
 [project.optional-dependencies]
 dev = [
   "pytest>=8.0,<9.0",
